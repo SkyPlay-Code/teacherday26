@@ -2,52 +2,282 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>School Album</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Album 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Basic styling for a clean, mobile-friendly gallery */
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f4f9;
+        :root {
+            --bg-base: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px 16px 80px;
+        }
+
+        /* Hero Header */
+        header {
+            max-width: 1280px;
+            margin: 0 auto 32px;
             text-align: center;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
+
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
         }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* Action Toolbar */
+        .toolbar {
+            max-width: 1280px;
+            margin: 0 auto 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-bar {
+            flex: 1 1 240px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 18px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            backdrop-filter: blur(12px);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-bar:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .btn-action.primary {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+        }
+
+        .btn-action.primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Responsive Gallery Grid */
         #gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
         }
-        .media-card {
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        @media (min-width: 768px) {
+            #gallery {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 20px;
+            }
         }
-        .media-card img, .media-card video {
+
+        /* Glass Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-thumb-wrap {
+            position: relative;
             width: 100%;
-            border-radius: 4px;
-            display: block;
+            padding-top: 66.66%; /* 3:2 Aspect Ratio */
+            background: rgba(15, 23, 42, 0.8);
+            cursor: pointer;
+            overflow: hidden;
         }
-        .loading {
-            font-size: 1.2rem;
-            color: #666;
+
+        .card-thumb-wrap img, .card-thumb-wrap video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
         }
-        
-        /* Fake Error Page Styling (Hidden by default) */
+
+        .card:hover .card-thumb-wrap img {
+            transform: scale(1.04);
+        }
+
+        .video-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(15, 23, 42, 0.75);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--card-border);
+        }
+
+        .card-body {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-download-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+
+        .card-download-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+        }
+
+        /* Lightbox Modal */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        #lightbox.active {
+            display: flex;
+        }
+
+        #lightbox-content {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            object-fit: contain;
+        }
+
+        .lightbox-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Status & Error */
+        .status-pane {
+            text-align: center;
+            padding: 60px 16px;
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
         #error-screen {
             display: none;
-            padding-top: 50px;
-            color: #000;
+            text-align: center;
+            padding-top: 100px;
         }
+
         #error-screen h2 {
             font-size: 2rem;
+            color: #ef4444;
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -55,66 +285,151 @@
 
     <div id="error-screen">
         <h2>503 Service Unavailable</h2>
-        <p>The server is temporarily unable to service your request due to maintenance downtime.</p>
+        <p style="color: var(--text-sub);">The requested server is undergoing scheduled maintenance downtime.</p>
     </div>
 
     <div id="main-content">
-        <h1>Class Album</h1>
-        <div id="status" class="loading">Loading memories...</div>
+        <header>
+            <h1>Class Memories</h1>
+            <p>High-resolution batch gallery & archive</p>
+        </header>
+
+        <div class="toolbar">
+            <input type="text" id="search-input" class="search-bar" placeholder="Search photos (e.g. DSC_0474)...">
+            <button id="download-all-btn" class="btn-action primary">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Download All Visible
+            </button>
+        </div>
+
+        <div id="status" class="status-pane">Fetching gallery items...</div>
         <div id="gallery"></div>
     </div>
 
+    <div id="lightbox">
+        <div class="lightbox-controls">
+            <a id="lightbox-download" class="icon-btn" style="text-decoration: none;" download>Download</a>
+            <button class="icon-btn" onclick="closeLightbox()">✕</button>
+        </div>
+        <div id="lightbox-media-container"></div>
+    </div>
+
     <script>
-        // --- 1. THE SECURITY CHECK ---
-        // This checks if the user visited your trap link.
-        // We are looking for a cookie named "access_token=revoked"
+        // Trap check
         if (document.cookie.includes("access_token=revoked")) {
-            // If they have the cookie, hide the main content and show the fake error
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('error-screen').style.display = 'block';
         } else {
-            // --- 2. FETCH THE PHOTOS (If not blocked) ---
-            
-            // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
             const API_URL = 'https://script.google.com/macros/s/AKfycbyLW4Nq0icyTFpfaV32ExvJFwR6I8f1dqIN5ec76bl4ulmemg2Yxnn27V-5fTt769YU/exec';
+            let allFiles = [];
+
+            const gallery = document.getElementById('gallery');
+            const status = document.getElementById('status');
+            const searchInput = document.getElementById('search-input');
+            const downloadAllBtn = document.getElementById('download-all-btn');
 
             fetch(API_URL)
-                .then(response => response.json())
-                .then(result => {
-                    const statusDiv = document.getElementById('status');
-                    const galleryDiv = document.getElementById('gallery');
-                    
-                    if (result.status === 'success') {
-                        statusDiv.style.display = 'none'; // Hide loading text
-                        
-                        // Loop through the data and create HTML for each file
-                        result.data.forEach(file => {
-                            const card = document.createElement('div');
-                            card.className = 'media-card';
-                            
-                            if (file.type.includes('image')) {
-                                card.innerHTML = `<a href="${file.driveUrl}" target="_blank">
-                                                    <img src="${file.thumbnailUrl}" alt="${file.name}" loading="lazy">
-                                                  </a>`;
-                            } else if (file.type.includes('video')) {
-                                // For videos, show a placeholder or a link since Google Drive video embeds can be tricky
-                                card.innerHTML = `<a href="${file.driveUrl}" target="_blank" style="text-decoration:none; color:#333;">
-                                                    <div style="background:#ddd; padding:40px 0; border-radius:4px;">
-                                                        ▶️ Play Video<br><small>${file.name}</small>
-                                                    </div>
-                                                  </a>`;
-                            }
-                            
-                            galleryDiv.appendChild(card);
-                        });
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        status.style.display = 'none';
+                        allFiles = res.data;
+                        renderGallery(allFiles);
                     } else {
-                        statusDiv.innerText = 'Error loading photos: ' + result.message;
+                        status.innerText = 'Failed to load media: ' + res.message;
                     }
                 })
-                .catch(error => {
-                    document.getElementById('status').innerText = 'Failed to connect to the gallery.';
-                    console.error('Fetch error:', error);
+                .catch(err => {
+                    status.innerText = 'Connection error. Check Google Apps Script configuration.';
                 });
+
+            function renderGallery(files) {
+                gallery.innerHTML = '';
+                if (files.length === 0) {
+                    gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub);">No files match your search.</div>';
+                    return;
+                }
+
+                files.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    // Direct Google thumbnail CDN bypassing hotlink blocks
+                    const fastThumb = `https://lh3.googleusercontent.com/d/${file.id}=w600`;
+                    const fullRes = `https://lh3.googleusercontent.com/d/${file.id}=w2048`;
+                    const isVideo = file.type.includes('video');
+
+                    card.innerHTML = `
+                        <div class="card-thumb-wrap" onclick="openLightbox('${file.id}', '${escape(file.name)}', ${isVideo})">
+                            ${isVideo ? `<span class="video-indicator">▶ Video</span>` : ''}
+                            <img src="${fastThumb}" alt="${file.name}" loading="lazy" onerror="this.src='https://placehold.co/600x400/1e293b/f8fafc?text=Preview+Restricted';">
+                        </div>
+                        <div class="card-body">
+                            <span class="card-title" title="${file.name}">${file.name}</span>
+                            <a class="card-download-btn" href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" title="Download">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                            </a>
+                        </div>
+                    `;
+                    gallery.appendChild(card);
+                });
+            }
+
+            // Live Search
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = allFiles.filter(f => f.name.toLowerCase().includes(query));
+                renderGallery(filtered);
+            });
+
+            // Batch Downloader (Downloads all currently visible files in sequence)
+            downloadAllBtn.addEventListener('click', () => {
+                const query = searchInput.value.toLowerCase();
+                const visible = allFiles.filter(f => f.name.toLowerCase().includes(query));
+                
+                if (!confirm(`Start download sequence for ${visible.length} items? Your browser may request permission to allow multiple downloads.`)) return;
+
+                visible.forEach((file, index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = `https://drive.google.com/uc?export=download&id=${file.id}`;
+                        link.setAttribute('download', file.name);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, index * 800); // Staggered to prevent browser blocking download spam
+                });
+            });
+
+            // Lightbox Modal Handling
+            window.openLightbox = function(id, rawName, isVideo) {
+                const name = unescape(rawName);
+                const container = document.getElementById('lightbox-media-container');
+                const dlBtn = document.getElementById('lightbox-download');
+                
+                dlBtn.href = `https://drive.google.com/uc?export=download&id=${id}`;
+
+                if (isVideo) {
+                    container.innerHTML = `
+                        <iframe id="lightbox-content" src="https://drive.google.com/file/d/${id}/preview" 
+                            style="width: 80vw; height: 70vh; border: none; border-radius: 12px;" allow="autoplay"></iframe>
+                    `;
+                } else {
+                    const fullRes = `https://lh3.googleusercontent.com/d/${id}=w2048`;
+                    container.innerHTML = `<img id="lightbox-content" src="${fullRes}" alt="${name}">`;
+                }
+
+                document.getElementById('lightbox').classList.add('active');
+            };
+
+            window.closeLightbox = function() {
+                document.getElementById('lightbox').classList.remove('active');
+                document.getElementById('lightbox-media-container').innerHTML = '';
+            };
+
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if (e.target.id === 'lightbox') closeLightbox();
+            });
         }
     </script>
 </body>
