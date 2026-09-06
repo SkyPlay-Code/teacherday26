@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>School Album</title>
+    <style>
+        /* Basic styling for a clean, mobile-friendly gallery */
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .media-card {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .media-card img, .media-card video {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+        .loading {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Fake Error Page Styling (Hidden by default) */
+        #error-screen {
+            display: none;
+            padding-top: 50px;
+            color: #000;
+        }
+        #error-screen h2 {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="error-screen">
+        <h2>503 Service Unavailable</h2>
+        <p>The server is temporarily unable to service your request due to maintenance downtime.</p>
+    </div>
+
+    <div id="main-content">
+        <h1>Class Album</h1>
+        <div id="status" class="loading">Loading memories...</div>
+        <div id="gallery"></div>
+    </div>
+
+    <script>
+        // --- 1. THE SECURITY CHECK ---
+        // This checks if the user visited your trap link.
+        // We are looking for a cookie named "access_token=revoked"
+        if (document.cookie.includes("access_token=revoked")) {
+            // If they have the cookie, hide the main content and show the fake error
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('error-screen').style.display = 'block';
+        } else {
+            // --- 2. FETCH THE PHOTOS (If not blocked) ---
+            
+            // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+            const API_URL = 'https://script.google.com/macros/s/AKfycbyLW4Nq0icyTFpfaV32ExvJFwR6I8f1dqIN5ec76bl4ulmemg2Yxnn27V-5fTt769YU/exec';
+
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(result => {
+                    const statusDiv = document.getElementById('status');
+                    const galleryDiv = document.getElementById('gallery');
+                    
+                    if (result.status === 'success') {
+                        statusDiv.style.display = 'none'; // Hide loading text
+                        
+                        // Loop through the data and create HTML for each file
+                        result.data.forEach(file => {
+                            const card = document.createElement('div');
+                            card.className = 'media-card';
+                            
+                            if (file.type.includes('image')) {
+                                card.innerHTML = `<a href="${file.driveUrl}" target="_blank">
+                                                    <img src="${file.thumbnailUrl}" alt="${file.name}" loading="lazy">
+                                                  </a>`;
+                            } else if (file.type.includes('video')) {
+                                // For videos, show a placeholder or a link since Google Drive video embeds can be tricky
+                                card.innerHTML = `<a href="${file.driveUrl}" target="_blank" style="text-decoration:none; color:#333;">
+                                                    <div style="background:#ddd; padding:40px 0; border-radius:4px;">
+                                                        ▶️ Play Video<br><small>${file.name}</small>
+                                                    </div>
+                                                  </a>`;
+                            }
+                            
+                            galleryDiv.appendChild(card);
+                        });
+                    } else {
+                        statusDiv.innerText = 'Error loading photos: ' + result.message;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').innerText = 'Failed to connect to the gallery.';
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+</body>
+</html>
